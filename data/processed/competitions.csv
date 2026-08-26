@@ -1,0 +1,4 @@
+competition_id,competition_name,parent_id,type,gender,category_id
+comp001,ATP Example,,singles,men,cat001
+comp002,WTA Example,,singles,women,cat002
+comp003,ATP Doubles Example,comp001,doubles,men,cat001

@@ -1,0 +1,37 @@
+{
+    "competitions": [
+        {
+            "id": "comp001",
+            "name": "ATP Example",
+            "parent_id": null,
+            "type": "singles",
+            "gender": "men",
+            "category": {
+                "id": "cat001",
+                "name": "ATP"
+            }
+        },
+        {
+            "id": "comp002",
+            "name": "WTA Example",
+            "parent_id": null,
+            "type": "singles",
+            "gender": "women",
+            "category": {
+                "id": "cat002",
+                "name": "WTA"
+            }
+        },
+        {
+            "id": "comp003",
+            "name": "ATP Doubles Example",
+            "parent_id": "comp001",
+            "type": "doubles",
+            "gender": "men",
+            "category": {
+                "id": "cat001",
+                "name": "ATP"
+            }
+        }
+    ]
+}
