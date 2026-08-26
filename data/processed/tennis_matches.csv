@@ -1,0 +1,21 @@
+match_id,category,date,competition,city,country,surface,winner,runner_up,winner_sets,runner_up_sets,set1_winner_games,set1_runnerup_games,set2_winner_games,set2_runnerup_games
+1,ATP Tour,2026-01-05,Australian Open,Melbourne,Australia,Hard,Novak Djokovic,Jannik Sinner,3,1,6,4,7,5
+2,ATP Tour,2026-01-12,Australian Open,Melbourne,Australia,Hard,Carlos Alcaraz,Alexander Zverev,3,2,7,6,3,6
+3,ATP Tour,2026-02-02,Rotterdam Open,Rotterdam,Netherlands,Hard,Jannik Sinner,Daniil Medvedev,2,1,6,4,6,4
+4,ATP Tour,2026-02-09,Qatar Open,Doha,Qatar,Hard,Carlos Alcaraz,Novak Djokovic,2,0,7,5,6,4
+5,ATP Tour,2026-02-16,Dubai Tennis Championships,Dubai,UAE,Hard,Alexander Zverev,Daniil Medvedev,2,1,6,3,4,6
+6,ATP Tour,2026-03-02,Indian Wells Masters,Indian Wells,USA,Hard,Jannik Sinner,Carlos Alcaraz,2,1,6,4,3,6
+7,ATP Tour,2026-03-09,Miami Open,Miami,USA,Hard,Novak Djokovic,Alexander Zverev,2,0,6,3,6,4
+8,ATP Tour,2026-03-30,Monte Carlo Masters,Monte Carlo,Monaco,Clay,Carlos Alcaraz,Jannik Sinner,2,1,6,7,6,4
+9,ATP Tour,2026-04-06,Barcelona Open,Barcelona,Spain,Clay,Jannik Sinner,Daniil Medvedev,2,0,6,2,6,3
+10,ATP Tour,2026-04-13,Madrid Open,Madrid,Spain,Clay,Carlos Alcaraz,Alexander Zverev,2,1,6,4,3,6
+11,ATP Tour,2026-05-04,Rome Masters,Rome,Italy,Clay,Novak Djokovic,Jannik Sinner,2,1,7,5,3,6
+12,ATP Tour,2026-05-18,French Open,Paris,France,Clay,Jannik Sinner,Carlos Alcaraz,3,2,6,4,4,6
+13,ATP Tour,2026-06-15,Halle Open,Halle,Germany,Grass,Alexander Zverev,Novak Djokovic,2,1,6,4,3,6
+14,ATP Tour,2026-06-22,Queens Club Championships,London,UK,Grass,Carlos Alcaraz,Daniil Medvedev,2,0,6,3,6,4
+15,ATP Tour,2026-06-29,Wimbledon,London,UK,Grass,Novak Djokovic,Carlos Alcaraz,3,2,7,6,4,6
+16,ATP Tour,2026-07-13,Hamburg Open,Hamburg,Germany,Clay,Jannik Sinner,Alexander Zverev,2,1,6,3,4,6
+17,ATP Tour,2026-07-20,Canada Masters,Toronto,Canada,Hard,Carlos Alcaraz,Jannik Sinner,2,1,6,4,3,6
+18,ATP Tour,2026-07-27,Cincinnati Masters,Cincinnati,USA,Hard,Novak Djokovic,Daniil Medvedev,2,0,6,4,6,3
+19,ATP Tour,2026-08-03,US Open,New York,USA,Hard,Jannik Sinner,Novak Djokovic,3,2,6,7,6,4
+20,ATP Tour,2026-08-10,US Open,New York,USA,Hard,Carlos Alcaraz,Alexander Zverev,3,1,6,3,4,6
