@@ -1,28 +1,73 @@
 import os
+
 import pandas as pd
 from sqlalchemy import text
+
 from database.connection import get_engine
 
-def init_schema(engine):
-    schema_path = os.path.join(os.path.dirname(__file__), "schema.sql")
-    if os.path.exists(schema_path):
-        with open(schema_path, "r", encoding="utf-8") as f:
-            sql_statements = f.read().split(";")
-            with engine.connect() as conn:
-                for statement in sql_statements:
-                    if statement.strip():
-                        stmt = statement.replace("SERIAL PRIMARY KEY", "INTEGER PRIMARY KEY AUTOINCREMENT")
-                        conn.execute(text(stmt))
-                conn.commit()
-        print("Schema initialized successfully.")
 
-def insert_table_data(csv_file, table_name, engine, processed_dir):
-    file_path = os.path.join(processed_dir, csv_file)
+def init_schema(engine):
+    """Create all database tables from schema.sql."""
+    schema_path = os.path.join(
+        os.path.dirname(__file__),
+        "schema.sql"
+    )
+
+    with open(schema_path, "r", encoding="utf-8") as file:
+        sql_statements = file.read().split(";")
+
+    with engine.connect() as conn:
+        for statement in sql_statements:
+            if statement.strip():
+                stmt = statement.replace(
+                    "SERIAL PRIMARY KEY",
+                    "INTEGER PRIMARY KEY AUTOINCREMENT"
+                )
+                conn.execute(text(stmt))
+
+        conn.commit()
+
+    print("Schema initialized successfully.")
+
+
+def clear_tables(engine):
+    """Clear existing data before loading fresh CSV data."""
+    tables = [
+        "competitor_rankings",
+        "venues",
+        "competitors",
+        "competitions",
+        "complexes",
+        "categories"
+    ]
+
+    with engine.connect() as conn:
+        for table in tables:
+            conn.execute(text(f"DELETE FROM {table}"))
+
+        conn.commit()
+
+    print("Existing table data cleared.")
+
+
+def insert_table_data(
+    csv_file,
+    table_name,
+    engine,
+    processed_dir
+):
+    """Load a CSV file into the specified database table."""
+    file_path = os.path.join(
+        processed_dir,
+        csv_file
+    )
+
     if not os.path.exists(file_path):
         print(f"Skipping {csv_file}: File not found.")
         return
 
     df = pd.read_csv(file_path)
+
     if df.empty:
         print(f"Skipping {csv_file}: File is empty.")
         return
@@ -30,17 +75,44 @@ def insert_table_data(csv_file, table_name, engine, processed_dir):
     df = df.drop_duplicates()
 
     try:
-        df.to_sql(table_name, engine, if_exists="append", index=False)
-        print(f"Loaded {len(df)} rows into '{table_name}'.")
-    except Exception as e:
-        print(f"Error loading {table_name}: {e}")
+        df.to_sql(
+            table_name,
+            engine,
+            if_exists="append",
+            index=False
+        )
+
+        print(
+            f"Loaded {len(df)} rows into '{table_name}'."
+        )
+
+    except Exception as error:
+        print(
+            f"Error loading {table_name}: {error}"
+        )
+
 
 def main():
+    """Initialize database and load all processed CSV files."""
     engine = get_engine()
+
+    # Create database tables
     init_schema(engine)
 
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    processed_dir = os.path.join(base_dir, "data", "processed")
+    # Remove previous data
+    clear_tables(engine)
+
+    base_dir = os.path.dirname(
+        os.path.dirname(
+            os.path.abspath(__file__)
+        )
+    )
+
+    processed_dir = os.path.join(
+        base_dir,
+        "data",
+        "processed"
+    )
 
     tables = [
         ("categories.csv", "categories"),
@@ -48,13 +120,22 @@ def main():
         ("competitors.csv", "competitors"),
         ("competitions.csv", "competitions"),
         ("venues.csv", "venues"),
-        ("competitor_rankings.csv", "competitor_rankings")
+        (
+            "competitor_rankings.csv",
+            "competitor_rankings"
+        )
     ]
 
     for csv_file, table_name in tables:
-        insert_table_data(csv_file, table_name, engine, processed_dir)
+        insert_table_data(
+            csv_file,
+            table_name,
+            engine,
+            processed_dir
+        )
 
     print("All available data processed.")
+
 
 if __name__ == "__main__":
     main()
