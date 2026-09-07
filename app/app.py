@@ -1,75 +1,448 @@
 import streamlit as st
-import pandas as pd
-from pathlib import Path
-from queries import get_matches, player_summary
-from charts import wins_by_player, wins_by_surface, competitions_by_count
 
-st.set_page_config(page_title="Tennis SportRadar Analytics", page_icon="🎾", layout="wide")
+from queries import (
+    get_competitors,
+    get_competitions,
+    get_venues,
+    country_summary,
+    complex_summary,
+)
 
-DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "processed" / "tennis_matches.csv"
+from charts import (
+    points_by_player,
+    competitions_by_category,
+    competitions_by_gender,
+    venues_by_country,
+    venues_by_complex,
+    movement_chart,
+)
 
-st.title("🎾 Tennis SportRadar Analytics Dashboard")
-st.caption("Person 4 — Streamlit Dashboard / Final Integration")
+
+# ============================================================
+# PAGE CONFIGURATION
+# ============================================================
+
+st.set_page_config(
+    page_title="Tennis SportRadar Analytics",
+    page_icon="🎾",
+    layout="wide",
+)
+
+
+# ============================================================
+# LOAD DATA
+# ============================================================
 
 @st.cache_data
-def load_data():
-    return get_matches(DATA_PATH)
+def load_all_data():
+    competitors = get_competitors()
+    competitions = get_competitions()
+    venues = get_venues()
 
-df = load_data()
+    return competitors, competitions, venues
+
+
+try:
+    competitors, competitions, venues = load_all_data()
+
+except Exception as error:
+    st.error("Unable to load the database.")
+    st.exception(error)
+    st.stop()
+
+
+# ============================================================
+# HEADER
+# ============================================================
+
+st.title("🎾 Tennis SportRadar Analytics Dashboard")
+
+st.markdown(
+    """
+    **Game Analytics: Unlocking Tennis Data with SportRadar API**
+
+    Interactive analysis of competitors, rankings,
+    competitions, venues and complexes.
+    """
+)
+
+
+# ============================================================
+# SIDEBAR FILTERS
+# ============================================================
 
 with st.sidebar:
-    st.header("Filters")
-    players = sorted(set(df["winner"]) | set(df["runner_up"]))
-    player = st.multiselect("Player", players)
-    surfaces = sorted(df["surface"].dropna().unique())
-    surface = st.multiselect("Surface", surfaces)
-    countries = sorted(df["country"].dropna().unique())
-    country = st.multiselect("Country", countries)
 
-filtered = df.copy()
-if player:
-    filtered = filtered[
-        filtered["winner"].isin(player) | filtered["runner_up"].isin(player)
+    st.header("🔎 Filters")
+
+    countries = sorted(
+        competitors["country"]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+    selected_countries = st.multiselect(
+        "Country",
+        countries,
+    )
+
+    min_points = int(
+        competitors["points"].min()
+        if not competitors.empty
+        else 0
+    )
+
+    max_points = int(
+        competitors["points"].max()
+        if not competitors.empty
+        else 0
+    )
+
+    selected_points = st.slider(
+        "Ranking Points",
+        min_value=min_points,
+        max_value=max_points,
+        value=(min_points, max_points),
+    )
+
+    max_rank = int(
+        competitors["rank"].max()
+        if not competitors.empty
+        else 1
+    )
+
+    selected_rank = st.slider(
+        "Maximum Rank",
+        min_value=1,
+        max_value=max_rank,
+        value=max_rank,
+    )
+
+
+# ============================================================
+# APPLY FILTERS
+# ============================================================
+
+filtered_competitors = competitors.copy()
+
+if selected_countries:
+    filtered_competitors = filtered_competitors[
+        filtered_competitors["country"].isin(
+            selected_countries
+        )
     ]
-if surface:
-    filtered = filtered[filtered["surface"].isin(surface)]
-if country:
-    filtered = filtered[filtered["country"].isin(country)]
 
-total_matches = len(filtered)
-total_players = len(set(filtered["winner"]) | set(filtered["runner_up"]))
-total_competitions = filtered["competition"].nunique()
-total_countries = filtered["country"].nunique()
+filtered_competitors = filtered_competitors[
+    (filtered_competitors["points"] >= selected_points[0])
+    & (filtered_competitors["points"] <= selected_points[1])
+]
+
+filtered_competitors = filtered_competitors[
+    filtered_competitors["rank"] <= selected_rank
+]
+
+
+# ============================================================
+# KPI CARDS
+# ============================================================
+
+total_competitors = len(filtered_competitors)
+total_competitions = len(competitions)
+total_venues = len(venues)
+total_complexes = venues["complex_name"].nunique()
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Matches", total_matches)
-c2.metric("Players", total_players)
-c3.metric("Competitions", total_competitions)
-c4.metric("Countries", total_countries)
+
+c1.metric(
+    "👤 Competitors",
+    total_competitors,
+)
+
+c2.metric(
+    "🏆 Competitions",
+    total_competitions,
+)
+
+c3.metric(
+    "📍 Venues",
+    total_venues,
+)
+
+c4.metric(
+    "🏟️ Complexes",
+    total_complexes,
+)
+
 
 st.divider()
 
+
+# ============================================================
+# RANKING ANALYSIS
+# ============================================================
+
+st.header("🏆 Ranking Analysis")
+
 left, right = st.columns(2)
+
 with left:
-    st.subheader("🏆 Wins by Player")
-    st.bar_chart(wins_by_player(filtered), x="player", y="wins")
+
+    st.subheader("Top Competitors by Points")
+
+    points_data = points_by_player(
+        filtered_competitors
+    )
+
+    if not points_data.empty:
+        st.bar_chart(
+            points_data.set_index("name")["points"]
+        )
+    else:
+        st.info("No ranking data available.")
+
+
 with right:
-    st.subheader("🎾 Wins by Surface")
-    st.bar_chart(wins_by_surface(filtered), x="surface", y="wins")
 
-st.subheader("📊 Competitions")
-st.bar_chart(competitions_by_count(filtered), x="competition", y="matches")
+    st.subheader("Ranking Movement")
 
-st.subheader("📋 Match Data")
-st.dataframe(filtered.sort_values("date", ascending=False), use_container_width=True)
+    movement_data = movement_chart(
+        filtered_competitors
+    )
 
-st.subheader("👤 Player Summary")
-summary = player_summary(filtered)
-st.dataframe(summary, use_container_width=True)
+    if not movement_data.empty:
+        st.bar_chart(
+            movement_data.set_index("name")["movement"]
+        )
+    else:
+        st.info("No movement data available.")
 
-st.download_button(
-    "Download filtered data",
-    filtered.to_csv(index=False).encode("utf-8"),
-    "filtered_tennis_matches.csv",
-    "text/csv"
+
+st.subheader("📋 Ranking Leaderboard")
+
+leaderboard = filtered_competitors[
+    [
+        "name",
+        "country",
+        "rank",
+        "movement",
+        "points",
+        "competitions_played",
+    ]
+].sort_values("rank")
+
+st.dataframe(
+    leaderboard,
+    use_container_width=True,
+    hide_index=True,
+)
+
+
+# ============================================================
+# COUNTRY ANALYSIS
+# ============================================================
+
+st.header("🌍 Country Analysis")
+
+country_data = country_summary(
+    filtered_competitors
+)
+
+if not country_data.empty:
+
+    left, right = st.columns(2)
+
+    with left:
+
+        st.subheader("Competitors by Country")
+
+        st.bar_chart(
+            country_data.set_index("country")[
+                "competitors"
+            ]
+        )
+
+    with right:
+
+        st.subheader("Average Points by Country")
+
+        st.bar_chart(
+            country_data.set_index("country")[
+                "average_points"
+            ]
+        )
+
+    st.dataframe(
+        country_data,
+        use_container_width=True,
+        hide_index=True,
+    )
+
+
+# ============================================================
+# COMPETITION ANALYSIS
+# ============================================================
+
+st.header("🎾 Competition Analysis")
+
+left, right = st.columns(2)
+
+with left:
+
+    st.subheader("Competitions by Category")
+
+    category_data = competitions_by_category(
+        competitions
+    )
+
+    if not category_data.empty:
+        st.bar_chart(
+            category_data.set_index(
+                "category_name"
+            )["competitions"]
+        )
+
+
+with right:
+
+    st.subheader("Competitions by Gender")
+
+    gender_data = competitions_by_gender(
+        competitions
+    )
+
+    if not gender_data.empty:
+        st.bar_chart(
+            gender_data.set_index(
+                "gender"
+            )["competitions"]
+        )
+
+
+st.subheader("📋 Competition Details")
+
+st.dataframe(
+    competitions,
+    use_container_width=True,
+    hide_index=True,
+)
+
+
+# ============================================================
+# VENUE ANALYSIS
+# ============================================================
+
+st.header("📍 Venue Analysis")
+
+left, right = st.columns(2)
+
+with left:
+
+    st.subheader("Venues by Country")
+
+    country_venue_data = venues_by_country(
+        venues
+    )
+
+    if not country_venue_data.empty:
+        st.bar_chart(
+            country_venue_data.set_index(
+                "country_name"
+            )["venues"]
+        )
+
+
+with right:
+
+    st.subheader("Venues by Complex")
+
+    complex_venue_data = venues_by_complex(
+        venues
+    )
+
+    if not complex_venue_data.empty:
+        st.bar_chart(
+            complex_venue_data.set_index(
+                "complex_name"
+            )["venues"]
+        )
+
+
+st.subheader("📋 Venue Details")
+
+st.dataframe(
+    venues,
+    use_container_width=True,
+    hide_index=True,
+)
+
+
+# ============================================================
+# COMPLEX SUMMARY
+# ============================================================
+
+st.subheader("🏟️ Complex Summary")
+
+complex_data = complex_summary(venues)
+
+st.dataframe(
+    complex_data,
+    use_container_width=True,
+    hide_index=True,
+)
+
+
+# ============================================================
+# DOWNLOAD DATA
+# ============================================================
+
+st.divider()
+
+st.header("📥 Download Data")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+
+    st.download_button(
+        "Download Rankings",
+        filtered_competitors.to_csv(
+            index=False
+        ).encode("utf-8"),
+        "competitor_rankings.csv",
+        "text/csv",
+    )
+
+with col2:
+
+    st.download_button(
+        "Download Competitions",
+        competitions.to_csv(
+            index=False
+        ).encode("utf-8"),
+        "competitions.csv",
+        "text/csv",
+    )
+
+with col3:
+
+    st.download_button(
+        "Download Venues",
+        venues.to_csv(
+            index=False
+        ).encode("utf-8"),
+        "venues.csv",
+        "text/csv",
+    )
+
+
+# ============================================================
+# FOOTER
+# ============================================================
+
+st.divider()
+
+st.caption(
+    "Tennis SportRadar Analytics | "
+    "API → Python → SQL → Streamlit"
 )
