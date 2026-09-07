@@ -71,14 +71,128 @@ Maintains the relationship between competitions and categories.
 - Fields: Competitor ID, Name, Country, Country code, Abbreviation, Ranking, Ranking movement, Ranking points, Competitions played
 
 #Technology Stack
-Technology,Purpose
-Python,API integration and data processing
-SportRadar API,Tennis data source
-Pandas,Data cleaning and transformation
-SQL,Database analysis
-SQLite,Local relational database
-SQLAlchemy,Database connectivity
-Streamlit,Interactive dashboard
-Plotly,Data visualization
-python-dotenv,Environment variable management
-Git / GitHub,Version control and team collaboration
+
+ TechnologyPurposePythonAPI integration and data processingSportRadar APITennis data sourcePandasData cleaning and transformationSQLDatabase analysisSQLiteLocal relational databaseSQLAlchemyDatabase connectivityStreamlitInteractive dashboardPlotlyData visualizationpython-dotenvEnvironment variable managementGit / GitHubVersion control and team collaboration
+
+ # Project Structure
+ tennis-sport-radar/
+│
+├── api/
+│   ├── competitions.py
+│   ├── competition_transform.py
+│   ├── validate_competitions.py
+│   ├── complexes.py
+│   └── rankings.py
+│
+├── data/
+│   ├── raw/
+│   │   ├── competitions_sample.json
+│   │   ├── complexes_sample.json
+│   │   └── doubles_rankings_sample.json
+│   │
+│   └── processed/
+│       ├── categories.csv
+│       ├── competitions.csv
+│       ├── complexes.csv
+│       ├── venues.csv
+│       ├── competitors.csv
+│       └── competitor_rankings.csv
+│
+├── database/
+│   ├── schema.sql
+│   ├── connection.py
+│   ├── insert_data.py
+│   └── queries.sql
+│
+├── app/
+│   ├── app.py
+│   ├── queries.py
+│   ├── charts.py
+│   └── utils.py
+│
+├── .gitignore
+├── requirements.txt
+└── README.md
+
+# Database Design
+The project uses a normalized relational database consisting of six primary tables:
+
+categories ───────┐
+                  └────────── competitions
+
+complexes ────────┐
+                  └────────── venues
+
+competitors ──────┐
+                  └────────── competitor_rankings
+
+- categories: category_id, category_name
+
+- competitions: competition_id, competition_name, parent_id, type, gender, category_id
+
+- complexes: complex_id, complex_name
+
+- venues: venue_id, venue_name, city_name, country_name, country_code, timezone, complex_id
+
+- competitors: competitor_id, name, country, country_code, abbreviation
+
+- competitor_rankings: rank_id, rank, movement, points, competitions_played, competitor_id
+
+#Installation & Setup
+1. Clone the Repository
+git clone [https://github.com/updesh1/tennis-sport-radar.git](https://github.com/updesh1/tennis-sport-radar.git)
+cd tennis-sport-radar
+
+2. Create a Virtual Environment
+- On Windows:
+python -m venv venv
+- Activate in Git Bash:
+source venv/Scripts/activate
+- Activate in Windows Command Prompt:
+venv\Scripts\activate
+
+3. Install Dependencies
+pip install -r requirements.txt
+
+4. Environment Configuration
+Create a .env file in the project root. The .env file is excluded via .gitignore to protect credentials.
+API_KEY=your_sport_radar_api_key
+DB_TYPE=sqlite
+DB_NAME=tennis_db
+
+#How to Run the Complete Project
+From the project root with your virtual environment activated, run the following steps in order:
+
+- Step 1 — Process API Data (Sample Data Workflow)
+python api/competitions.py
+python api/complexes.py
+python api/rankings.py
+
+- Step 2 — Load the Database
+
+Bash
+python -m database.insert_data
+- Step 3 — Start the Dashboard
+
+Bash
+streamlit run app/app.py
+After starting the application, open: http://localhost:8501
+
+# Team Contributions
+This project was developed collaboratively as a four-person group project using Git branches and Pull Requests.
+
+- Person 1 (API & Competition Data): SportRadar API integration, competition/category extraction, JSON transformation, and validation.
+
+- Person 2 (Complexes, Venues & Rankings): Complex, venue, and competitor ranking extraction, data validation, and processed CSV generation.
+
+- Person 3 (Database & SQL): Database schema design, CSV-to-database loading, SQL analysis, and relational database implementation.
+
+- Person 4 (Streamlit Dashboard): Database integration, UI development, filters, interactive Plotly charts, and CSV data export functionality.
+
+# Security & Repository Notes
+- Never commit sensitive data: Ensure .env, tennis.db, venv/, and __pycache__/ remain in your .gitignore.
+
+- API Keys: Always use environment variables to load your SportRadar API key.
+
+- Repository: https://github.com/updesh1/tennis-sport-radar
+   
