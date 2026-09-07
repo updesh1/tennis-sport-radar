@@ -26,6 +26,7 @@ SQL Analysis
 Streamlit Dashboard
       ↓
 Tennis Insights
+```
 
 The project focuses on three major tennis data areas:
 
