@@ -1,0 +1,88 @@
+{
+  "generated_at": "2026-09-07T10:00:00+00:00",
+  "rankings": [
+    {
+      "gender": "men",
+      "name": "ATP Doubles",
+      "type_id": 2,
+      "week": 36,
+      "year": 2026,
+      "competitor_rankings": [
+        {
+          "rank": 1,
+          "movement": 0,
+          "points": 8450,
+          "competitions_played": 18,
+          "competitor": {
+            "id": "competitor001",
+            "name": "Player One",
+            "country": "India",
+            "country_code": "IND",
+            "abbreviation": "PON"
+          }
+        },
+        {
+          "rank": 2,
+          "movement": 1,
+          "points": 7980,
+          "competitions_played": 17,
+          "competitor": {
+            "id": "competitor002",
+            "name": "Player Two",
+            "country": "Spain",
+            "country_code": "ESP",
+            "abbreviation": "PTO"
+          }
+        },
+        {
+          "rank": 3,
+          "movement": -1,
+          "points": 7650,
+          "competitions_played": 19,
+          "competitor": {
+            "id": "competitor003",
+            "name": "Player Three",
+            "country": "Australia",
+            "country_code": "AUS",
+            "abbreviation": "PTH"
+          }
+        }
+      ]
+    },
+    {
+      "gender": "women",
+      "name": "WTA Doubles",
+      "type_id": 3,
+      "week": 36,
+      "year": 2026,
+      "competitor_rankings": [
+        {
+          "rank": 1,
+          "movement": 2,
+          "points": 9120,
+          "competitions_played": 20,
+          "competitor": {
+            "id": "competitor004",
+            "name": "Player Four",
+            "country": "United States",
+            "country_code": "USA",
+            "abbreviation": "PFO"
+          }
+        },
+        {
+          "rank": 2,
+          "movement": 0,
+          "points": 8750,
+          "competitions_played": 18,
+          "competitor": {
+            "id": "competitor005",
+            "name": "Player Five",
+            "country": "United Kingdom",
+            "country_code": "GBR",
+            "abbreviation": "PFI"
+          }
+        }
+      ]
+    }
+  ]
+}
