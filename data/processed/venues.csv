@@ -1,0 +1,5 @@
+venue_id,venue_name,city_name,country_name,country_code,timezone,complex_id
+venue001,Center Court,New Delhi,India,IND,Asia/Kolkata,complex001
+venue002,Court 1,New Delhi,India,IND,Asia/Kolkata,complex001
+venue003,Center Court,London,England,GBR,Europe/London,complex002
+venue004,Rod Laver Arena,Melbourne,Australia,AUS,Australia/Melbourne,complex003

@@ -1,0 +1,54 @@
+{
+  "complexes": [
+    {
+      "id": "complex001",
+      "name": "National Tennis Center",
+      "venues": [
+        {
+          "id": "venue001",
+          "name": "Center Court",
+          "city_name": "New Delhi",
+          "country_name": "India",
+          "country_code": "IND",
+          "timezone": "Asia/Kolkata"
+        },
+        {
+          "id": "venue002",
+          "name": "Court 1",
+          "city_name": "New Delhi",
+          "country_name": "India",
+          "country_code": "IND",
+          "timezone": "Asia/Kolkata"
+        }
+      ]
+    },
+    {
+      "id": "complex002",
+      "name": "Wimbledon Tennis Complex",
+      "venues": [
+        {
+          "id": "venue003",
+          "name": "Center Court",
+          "city_name": "London",
+          "country_name": "England",
+          "country_code": "GBR",
+          "timezone": "Europe/London"
+        }
+      ]
+    },
+    {
+      "id": "complex003",
+      "name": "Melbourne Park",
+      "venues": [
+        {
+          "id": "venue004",
+          "name": "Rod Laver Arena",
+          "city_name": "Melbourne",
+          "country_name": "Australia",
+          "country_code": "AUS",
+          "timezone": "Australia/Melbourne"
+        }
+      ]
+    }
+  ]
+}
