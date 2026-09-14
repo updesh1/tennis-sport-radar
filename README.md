@@ -157,7 +157,7 @@ Competitor ranking data contains:
                                |
                                v
                        Tennis Insights
-
+```
 # Project Structure
 
 tennis-sport-radar/
@@ -220,8 +220,48 @@ competitors
      └──────── competitor_rankings
 
 # Categories Table
-The categories table stores competition 
+The categories table stores competition category information.
 
-category information.
 category_id
 category_name
+
+# Competitions Table
+The competitions table stores tennis competition information.
+
+competition_id
+competition_name
+parent_id
+type
+gender
+category_id
+
+# Venues Table
+The venues table stores venue information.
+
+venue_id
+venue_name
+city_name
+country_name
+country_code
+timezone
+complex_id
+
+The complex_id column establishes a relationship between venues and complexes.
+
+# Competitors Table
+The competitors table stores competitor information.
+
+competitor_id
+name
+country
+country_code
+abbreviation
+
+The competitor_id column establishes a relationship between rankings and competitors.
+
+# Installation
+## 1. Clone the Repository
+git clone https://github.com/updesh1/tennis-sport-radar.git
+
+Move into the project directory:
+cd tennis-sport-radar
